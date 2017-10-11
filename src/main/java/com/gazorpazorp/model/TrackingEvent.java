@@ -14,20 +14,23 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "SAMPLE")
+@Table(name = "tracking_event")
 public class TrackingEvent {
 
+	@JsonIgnore
 	private Long id;
+	@JsonIgnore
 	private Long deliveryId;
 	
 	@Enumerated(EnumType.STRING)
 	private TrackingEventType trackingEventType;
 
-	private Double latitude;
-	private Double longitude;
-
+	@JsonIgnore
+	private Location location;
+	
 	public TrackingEvent() {
 	}
 
@@ -57,10 +60,10 @@ public class TrackingEvent {
 		this.createdAt = createdAt;
 	}
 	
-	public TrackingEventType getCartEventType() {
+	public TrackingEventType getTrackingEventType() {
 		return trackingEventType;
 	}
-	public void setCartEventType(TrackingEventType trackingEventType) {
+	public void setTrackingEventType(TrackingEventType trackingEventType) {
 		this.trackingEventType = trackingEventType;
 	}
 
@@ -71,18 +74,16 @@ public class TrackingEvent {
 		this.deliveryId = deliveryId;
 	}
 
-	public Double getLatitude() {
-		return latitude;
+	public Location getLocation() {
+		return location;
 	}
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	public Double getLongitude() {
-		return longitude;
-	}
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
+	@Override
+	public String toString() {
+		return "TrackingEvent [id=" + id + ", deliveryId=" + deliveryId + ", trackingEventType=" + trackingEventType
+				+ ", location=" + location + ", createdAt=" + createdAt + "]";
+	}
 }

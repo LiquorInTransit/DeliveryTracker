@@ -5,5 +5,8 @@ public enum TrackingEventType {
 	RECEIVED_DELIVERY,
     PICKING_ITEMS,
     ON_ROUTE,
-    DELIVERED
+    UPDATE_LOCATION,
+    ARRIVING,
+    DELIVERED,
+    CANCELED
 }

@@ -1,5 +1,8 @@
 package com.gazorpazorp.DeliveryTracker;
 
+import javax.annotation.PostConstruct;
+
+import org.hsqldb.util.DatabaseManagerSwing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -34,5 +37,11 @@ public class DeliveryTrackerApplication {
 	RequestInterceptor oauth2FeignRequestInterceptor(OAuth2ClientContext context) {
 		if (context == null) return null;
 		return new CustomOAuth2FeignRequestInterceptor(context);
+	}
+	
+	@PostConstruct
+	public void getDbManager(){
+	   DatabaseManagerSwing.main(
+		new String[] { "--url", "jdbc:hsqldb:mem:test://localhost/test?characterEncoding=UTF-8", "--user", "SA", "--password", ""});
 	}
 }
