@@ -52,7 +52,7 @@ public class TrackingEvent {
 		this.id = id;
 	}
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
