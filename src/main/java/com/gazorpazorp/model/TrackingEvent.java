@@ -15,6 +15,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "tracking_event")
@@ -28,7 +29,7 @@ public class TrackingEvent {
 	@Enumerated(EnumType.STRING)
 	private TrackingEventType trackingEventType;
 
-	@JsonIgnore
+	@JsonProperty(access=JsonProperty.Access.WRITE_ONLY)
 	private Location location;
 	
 	public TrackingEvent() {

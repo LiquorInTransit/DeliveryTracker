@@ -37,7 +37,7 @@ public class TrackingController {
 	@PostMapping("/{trackingId}")
 	@PreAuthorize("#oauth2.hasAnyScope('driver','system')")
 	public ResponseEntity createTrackingEvent(@RequestBody TrackingEvent trackingEvent, @PathVariable("trackingId") Long deliveryId) throws Exception {
-		return Optional.ofNullable(trackingService.createEvent(trackingEvent, deliveryId))
+		return Optional.ofNullable(trackingService.createEvent(trackingEvent, deliveryId, true))
 				.map(t -> new ResponseEntity(HttpStatus.OK))
 				.orElseThrow(() -> new Exception("Failed to create event"));
 	}

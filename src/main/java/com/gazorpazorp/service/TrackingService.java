@@ -51,8 +51,8 @@ public class TrackingService {
 		}
 	}
 	
-	public Boolean createEvent(TrackingEvent trackingEvent, Long deliveryId) throws Exception {
-		if (!verifyDriver(deliveryId)) {
+	public Boolean createEvent(TrackingEvent trackingEvent, Long deliveryId, boolean verify) throws Exception {
+		if (verify && !verifyDriver(deliveryId)) {
 			throw new Exception ("Not authorized to post updates to this delivery");
 		} else {
 			trackingEvent.setDeliveryId(deliveryId);
@@ -70,7 +70,7 @@ public class TrackingService {
 				.reduceWith(() -> new DeliveryStatusDto(), DeliveryStatusDto::incorporate)
 				.get();
 		
-		TrackingEvent ev = trackingEventRepo.findTopByDeliveryIdAndTrackingEventTypeInOrderByCreatedAtDesc(deliveryId, Arrays.asList(TrackingEventType.UPDATE_LOCATION));
+		TrackingEvent ev = trackingEventRepo.findTopByDeliveryIdOrderByCreatedAtDesc(deliveryId);
 		if (ev != null)
 			status.setLocation(ev.getLocation());
 		else 
