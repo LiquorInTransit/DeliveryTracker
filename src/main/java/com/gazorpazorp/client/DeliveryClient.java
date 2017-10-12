@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.gazorpazorp.client.config.TokenRequestClientConfiguration;
 import com.gazorpazorp.model.Delivery;
 
-@FeignClient(name="delivery-service", configuration = TokenRequestClientConfiguration.class)
+@FeignClient(name="order-and-delivery-service", configuration = TokenRequestClientConfiguration.class)
 public interface DeliveryClient {
 	
 	@GetMapping(value="/internal/deliveries/{deliveryId}", consumes = "application/json")
