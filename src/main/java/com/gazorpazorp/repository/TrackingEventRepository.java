@@ -10,9 +10,9 @@ import com.gazorpazorp.model.TrackingEvent;
 
 
 public interface TrackingEventRepository extends JpaRepository<TrackingEvent, Long> {
-	public Stream<TrackingEvent> findByDeliveryIdOrderByCreatedAtDesc(@Param("deliveryId") Long deliveryId);
-	public TrackingEvent findTopByDeliveryIdAndTrackingEventTypeInOrderByCreatedAtDesc(@Param("deliveryId") Long deliveryId, @Param("trackingEventType")List trackingEvents);
-	public TrackingEvent findTopByDeliveryIdOrderByCreatedAtDesc(@Param("deliveryId") Long deliveryId);
-	
-	public List<TrackingEvent> findByDeliveryId(@Param("deliveryId") Long deliveryId);
+//	public Stream<TrackingEvent> findByDeliveryIdOrderByCreatedAtDesc(@Param("deliveryId") Long deliveryId);
+//	public TrackingEvent findTopByDeliveryIdAndTrackingEventTypeInOrderByCreatedAtDesc(@Param("deliveryId") Long deliveryId, @Param("trackingEventType")List trackingEvents);
+//	public TrackingEvent findTopByDeliveryIdOrderByCreatedAtDesc(@Param("deliveryId") Long deliveryId);
+//	
+//	public List<TrackingEvent> findByDeliveryId(@Param("deliveryId") Long deliveryId);
 }

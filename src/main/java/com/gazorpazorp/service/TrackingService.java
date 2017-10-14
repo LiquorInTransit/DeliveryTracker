@@ -1,7 +1,6 @@
 package com.gazorpazorp.service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,13 +10,12 @@ import com.gazorpazorp.client.AccountClient;
 import com.gazorpazorp.client.DeliveryClient;
 import com.gazorpazorp.model.Customer;
 import com.gazorpazorp.model.Delivery;
+import com.gazorpazorp.model.DeliveryTracking;
 import com.gazorpazorp.model.Driver;
 import com.gazorpazorp.model.TrackingEvent;
 import com.gazorpazorp.model.TrackingEventType;
-import com.gazorpazorp.model.dto.DeliveryStatusDto;
+import com.gazorpazorp.repository.DeliveryTrackingRepository;
 import com.gazorpazorp.repository.TrackingEventRepository;
-
-import reactor.core.publisher.Flux;
 
 @Service
 public class TrackingService {
@@ -25,44 +23,63 @@ public class TrackingService {
 	@Autowired
 	TrackingEventRepository trackingEventRepo;
 	@Autowired
+	DeliveryTrackingRepository deliveryTrackingRepo;
+	@Autowired
 	DeliveryClient deliveryClient;
 	@Autowired
 	AccountClient accountClient;
 	
 	@Transactional(readOnly=false)
-	public DeliveryStatusDto getTrackingInfoById(Long deliveryId) throws Exception {
-		if (!verifyCustomer(deliveryId))
+	public DeliveryTracking getTrackingInfoById(UUID trackingId) throws Exception {
+		DeliveryTracking dt = deliveryTrackingRepo.findById(trackingId).orElse(null);
+		if (dt == null)
+			throw new Exception("No tracking information for trackingId " + trackingId);
+			
+		if (!verifyCustomer(dt.getDeliveryId()))
 			throw new Exception ("You are not authorized to track this delivery");
-		DeliveryStatusDto status = aggregateTrackingEvents(deliveryId);
-		return status;
+		
+		TrackingEvent latest = dt.getTrackingEvents().stream().findFirst().orElse(null);
+		if (latest == null)
+			return dt;
+		dt.setLocation(latest.getLocation());
+		dt.setStatus(latest.getTrackingEventType());
+		return dt;
 	}	
 	
-	public String createFirstTrackingEvent (Long deliveryId) throws Exception {
-		List<TrackingEvent> events = trackingEventRepo.findByDeliveryId(deliveryId);
-		if (events == null || events.isEmpty()) {
+	public String createDeliveryTracking (Long deliveryId) throws Exception {
+		DeliveryTracking tracking = deliveryTrackingRepo.findByDeliveryId(deliveryId).orElse(null);
+		if (tracking == null) {
+			DeliveryTracking dt = new DeliveryTracking();
+			dt.setDeliveryId(deliveryId);
+			dt = deliveryTrackingRepo.save(dt);			
+			
 			TrackingEvent ev = new TrackingEvent();
-			ev.setDeliveryId(deliveryId);
 			ev.setLocation(null);
 			ev.setTrackingEventType(TrackingEventType.AWAITING_ACCEPTANCE);
+			ev.setDeliveryTracking(dt);
 			trackingEventRepo.save(ev);
-			return "www.liquorintransit.party/api/tracking/"+deliveryId;
+			return /*"www.liquorintransit.party/api/tracking/"+*/dt.getId().toString();
 		} else {
 			throw new Exception ("Tracking for this delivery has already begun");
 		}
 	}
 	
-	public Boolean createEvent(TrackingEvent trackingEvent, Long deliveryId, boolean verify) throws Exception {
-		if (verify && !verifyDriver(deliveryId)) {
+	public Boolean createEvent(TrackingEvent trackingEvent, UUID trackingId, boolean verify) throws Exception {
+		DeliveryTracking dt = deliveryTrackingRepo.findById(trackingId).orElse(null);
+		if (dt == null)
+			throw new Exception("No tracking information for trackingId " + trackingId);
+		
+		if (verify && !verifyDriver(dt.getDeliveryId())) {
 			throw new Exception ("Not authorized to post updates to this delivery");
 		} else {
-			trackingEvent.setDeliveryId(deliveryId);
+			trackingEvent.setDeliveryTracking(dt);
 			trackingEventRepo.save(trackingEvent);
 			return true;
 		}
 	}
 	
 	//Getting functions
-	@Transactional(readOnly=false)
+/*	@Transactional(readOnly=false)
 	public DeliveryStatusDto aggregateTrackingEvents(Long deliveryId) throws Exception{		
 		Flux<TrackingEvent>trackingEvents = Flux.fromStream(trackingEventRepo.findByDeliveryIdOrderByCreatedAtDesc(deliveryId));
 		DeliveryStatusDto status = trackingEvents
@@ -76,7 +93,7 @@ public class TrackingService {
 		else 
 			status.setLocation(null);
 		return status;
-	}
+	}*/  
 	
 	public boolean verifyCustomer(Long deliveryId) throws Exception{
 		Customer customer = getCustomer();

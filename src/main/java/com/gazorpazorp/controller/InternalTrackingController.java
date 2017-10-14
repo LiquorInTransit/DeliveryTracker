@@ -1,6 +1,7 @@
 package com.gazorpazorp.controller;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,8 @@ public class InternalTrackingController {
 	
 	@PostMapping("/{trackingId}")
 	@PreAuthorize("#oauth2.hasScope('system')")
-	public ResponseEntity createTrackingEvent(@RequestBody TrackingEvent trackingEvent, @PathVariable("trackingId") Long deliveryId) throws Exception {
-		return Optional.ofNullable(trackingService.createEvent(trackingEvent, deliveryId, false))
+	public ResponseEntity createTrackingEvent(@RequestBody TrackingEvent trackingEvent, @PathVariable("trackingId") UUID trackingId) throws Exception {
+		return Optional.ofNullable(trackingService.createEvent(trackingEvent, trackingId, false))
 				.map(t -> new ResponseEntity(HttpStatus.OK))
 				.orElseThrow(() -> new Exception("Failed to create event"));
 	}

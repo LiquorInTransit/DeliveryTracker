@@ -1,6 +1,7 @@
 package com.gazorpazorp.controller;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gazorpazorp.model.DeliveryTracking;
 import com.gazorpazorp.model.TrackingEvent;
-import com.gazorpazorp.model.dto.DeliveryStatusDto;
 import com.gazorpazorp.service.TrackingService;
 
 @RestController
@@ -28,16 +29,16 @@ public class TrackingController {
 	
 	@GetMapping("/{trackingId}")
 	@PreAuthorize("#oauth2.hasScope('customer')")
-	public ResponseEntity getTrackingStatusById (@PathVariable("trackingId") Long deliveryId) throws Exception {
+	public ResponseEntity getTrackingStatusById (@PathVariable("trackingId") UUID deliveryId) throws Exception {
 		return Optional.ofNullable(trackingService.getTrackingInfoById(deliveryId))
-				.map(s -> new ResponseEntity<DeliveryStatusDto>(s, HttpStatus.OK))
+				.map(s -> new ResponseEntity<DeliveryTracking>(s, HttpStatus.OK))
 				.orElseThrow(() -> new Exception("An unknown error has occured."));
 	}
 	
 	@PostMapping("/{trackingId}")
 	@PreAuthorize("#oauth2.hasAnyScope('driver','system')")
-	public ResponseEntity createTrackingEvent(@RequestBody TrackingEvent trackingEvent, @PathVariable("trackingId") Long deliveryId) throws Exception {
-		return Optional.ofNullable(trackingService.createEvent(trackingEvent, deliveryId, true))
+	public ResponseEntity createTrackingEvent(@RequestBody TrackingEvent trackingEvent, @PathVariable("trackingId") UUID trackingId) throws Exception {
+		return Optional.ofNullable(trackingService.createEvent(trackingEvent, trackingId, true))
 				.map(t -> new ResponseEntity(HttpStatus.OK))
 				.orElseThrow(() -> new Exception("Failed to create event"));
 	}
@@ -45,7 +46,7 @@ public class TrackingController {
 	@PostMapping("/new")
 	@PreAuthorize("#oauth2.hasScope('system')")
 	public ResponseEntity<String> createFirstEvent (@RequestParam Long deliveryId) throws Exception {
-		return Optional.ofNullable(trackingService.createFirstTrackingEvent(deliveryId))
+		return Optional.ofNullable(trackingService.createDeliveryTracking(deliveryId))
 				.map(o -> new ResponseEntity<String>(o, HttpStatus.OK))
 				.orElseThrow(() -> new Exception("Could not create sample!"));
 	}
