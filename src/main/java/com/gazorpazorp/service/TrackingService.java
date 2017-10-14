@@ -74,6 +74,8 @@ public class TrackingService {
 		} else {
 			trackingEvent.setDeliveryTracking(dt);
 			trackingEventRepo.save(trackingEvent);
+			if (TrackingEventType.DELIVERED.equals(trackingEvent.getTrackingEventType()))
+				deliveryClient.completeDelivery(dt.getDeliveryId());
 			return true;
 		}
 	}

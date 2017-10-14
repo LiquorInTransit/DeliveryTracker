@@ -10,6 +10,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.oauth2.client.OAuth2ClientContext;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
@@ -24,6 +25,7 @@ import feign.RequestInterceptor;
 @EnableJpaRepositories("com.gazorpazorp.repository")
 @EntityScan(basePackages="com.gazorpazorp")
 @EnableEurekaClient
+@EnableAsync
 @EnableFeignClients("com.gazorpazorp.client")
 @EnableResourceServer
 @EnableOAuth2Client
