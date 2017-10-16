@@ -3,6 +3,7 @@ package com.gazorpazorp.client;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,11 @@ public interface DeliveryClient {
 	Delivery getDeliveryById(@PathVariable("deliveryId") Long deliveryId);
 	
 	@Async
-	@PostMapping(value="/internal/complete/{deliveryId}")
+	@PostMapping(value="/internal/conclude/{deliveryId}")
 	ResponseEntity completeDelivery(@PathVariable("deliveryId") Long deliveryId);
+	
+	@Async
+	@DeleteMapping(value="/internal/conclude/{deliveryId}")
+	ResponseEntity cancelDelivery(@PathVariable("deliveryId") Long deliveryId);
 }
 

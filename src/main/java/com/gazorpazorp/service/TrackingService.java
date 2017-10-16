@@ -44,7 +44,7 @@ public class TrackingService {
 		dt.setLocation(latest.getLocation());
 		dt.setStatus(latest.getTrackingEventType());
 		return dt;
-	}	
+	}
 	
 	public String createDeliveryTracking (Long deliveryId) throws Exception {
 		DeliveryTracking tracking = deliveryTrackingRepo.findByDeliveryId(deliveryId).orElse(null);
@@ -76,6 +76,8 @@ public class TrackingService {
 			trackingEventRepo.save(trackingEvent);
 			if (TrackingEventType.DELIVERED.equals(trackingEvent.getTrackingEventType()))
 				deliveryClient.completeDelivery(dt.getDeliveryId());
+			else if (TrackingEventType.CANCELLED.equals(trackingEvent.getTrackingEventType()))
+				deliveryClient.cancelDelivery(dt.getDeliveryId());
 			return true;
 		}
 	}
