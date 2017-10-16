@@ -67,10 +67,11 @@ public class TrackingService {
 	public Boolean createEvent(TrackingEvent trackingEvent, UUID trackingId, boolean verify) throws Exception {
 		DeliveryTracking dt = deliveryTrackingRepo.findById(trackingId).orElse(null);
 		if (dt == null)
-			throw new Exception("No tracking information for trackingId " + trackingId);
-		
-		if (verify && !verifyDriver(dt.getDeliveryId())) {
+			throw new Exception("No tracking information with trackingId " + trackingId);		
+		if (verify && !verifyDriver(dt.getDeliveryId())) 
 			throw new Exception ("Not authorized to post updates to this delivery");
+		if (dt.getTrackingEvents().stream().anyMatch(ev -> ev.getTrackingEventType().equals(TrackingEventType.CANCELLED)||ev.getTrackingEventType().equals(TrackingEventType.DELIVERED))) {
+			throw new Exception ("This delivery has completed. No new information accepted.");
 		} else {
 			trackingEvent.setDeliveryTracking(dt);
 			trackingEventRepo.save(trackingEvent);
