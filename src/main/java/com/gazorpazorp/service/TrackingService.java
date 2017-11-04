@@ -1,6 +1,7 @@
 package com.gazorpazorp.service;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,7 @@ public class TrackingService {
 			return dt;
 		dt.setLocation(latest.getLocation());
 		dt.setStatus(latest.getTrackingEventType());
+		dt.setTrackingEvents(dt.getTrackingEvents().stream().filter(t->t.getTrackingEventType()!=TrackingEventType.UPDATE_LOCATION).collect(Collectors.toSet()));
 		return dt;
 	}
 	
