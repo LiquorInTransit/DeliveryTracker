@@ -85,6 +85,11 @@ public class DeliveryTracking {
 	public void setLocation(Location location) {
 		this.location = location;
 	}
+	@Override
+	public String toString() {
+		return "DeliveryTracking [id=" + id.toString() + ", deliveryId=" + deliveryId + ", trackingEvents=" + trackingEvents
+				+ ", status=" + status + ", location=" + location + "]";
+	}
 	
 	
 	
